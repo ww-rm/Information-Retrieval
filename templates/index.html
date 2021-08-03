@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/pure-min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>小小的搜索引擎</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="search-box">
+            <p class="index-title"><a class="pure-menu-link" href="/">Little Search Engine</a></p>
+            <form class="pure-form pure-form-aligned" action="/search" method="GET">
+                <div class="pure-g">
+                    <input type="search" name="qs" placeholder="输入查询的内容" value="{{ page_data.query }}" class="pure-u-5-6 pure-input-rounded">
+                    <button type="submit" class="pure-u-1-6 pure-button">搜一搜</button>
+                </div>
+                <div class="pure-g query-method-box">
+                    <label class="pure-u-1-3">查询方式：</label>
+                    <input class="pure-u-1-12" type="radio" id="r-simple" name="qm" value="kw" {% if page_data.qm == "kw" %}checked{% endif %}>
+                    <label class="pure-u-1-4" for="r-simple">关键词查询</label>
+                    <input class="pure-u-1-12" type="radio" id="r-boolean" name="qm" value="bl" {% if page_data.qm == "bl" %}checked{% endif %}>
+                    <label class="pure-u-1-4" for="r-boolean">布尔查询</label>
+                </div>
+            </form>
+        </div>
+        {% if data %}
+        <div class="search-result">
+            <div class="result-title">
+                <div class="pure-g">
+                    <a href="/search?qs={{ page_data.query }}&qm={{ page_data.qm }}&p={{ page_data.prev_page_num }}" class="pure-u-1-3">上一页</a>
+                    <h3 class="title pure-u-1-3">搜索结果</h3>
+                    <a href="/search?qs={{ page_data.query }}&qm={{ page_data.qm }}&p={{ page_data.next_page_num }}" class="pure-u-1-3">下一页</a>
+                </div>
+            </div>
+            <p class="search-msg">
+                {{ data.msg }}，共搜索到<em>&nbsp;{{ page_data.total_num }}&nbsp;</em>条结果，
+                耗时<em>&nbsp;{{ data.time }}&nbsp;s&nbsp;</em>，
+                当前显示第<em>&nbsp;{{ page_data.p }}&nbsp;</em>面结果
+            </p>
+            {% if data.extra %}
+            <p class="search-msg">
+                成功匹配前<em>&nbsp;{{ data.extra.match_num }}&nbsp;</em>个关键词
+            </p>
+            {% endif %}
+            {% for docid, text in data.result %}
+            <div>
+                <p class="docid">文档ID：{{ docid }}</p>
+                <p class="doccontent">{{ text }}</p>
+                <hr class="break-line">
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+
+</html>
